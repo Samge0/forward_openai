@@ -1,0 +1,7 @@
+{
+  "printParam": false,
+  "TargetHost": "https://api.openai.com",
+  "forwardPathList": [
+    "/v1/chat/completions"
+  ]
+}

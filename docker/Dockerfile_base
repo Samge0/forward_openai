@@ -1,0 +1,17 @@
+# 使用 golang 官方镜像提供 Go 运行环境，并且命名为 buidler 以便后续引用
+FROM golang:1.20.1-alpine as builder
+
+# 启用 Go Modules
+ENV GO111MODULE on
+# gin配置，可设 debug | release
+ENV GIN_MODE=release
+
+# 设置工作目录
+WORKDIR /app
+
+# 将代码复制到容器中的工作目录
+COPY . .
+RUN cp config.dev.json config.json
+
+# 下载依赖包
+RUN go mod download
