@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forward OpenAI - API转发工具</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Noto Sans SC', 'Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Noto Serif SC', 'Manrope', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#e6fffc',
+                            100: '#b2f5f3',
+                            200: '#81ebf1',
+                            300: '#5ae0ef',
+                            400: '#41d8d1',
+                            500: '#41d8d1',
+                            600: '#3bc4c0',
+                            700: '#2ea8a4',
+                            800: '#238b88',
+                            900: '#1a6f6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', 'Inter', system-ui, sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(65, 216, 209, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #41d8d1 0%, #2ea8a4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-white to-brand-50 min-h-screen">
+    <!-- Top Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-brand-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <img src="icon.png" alt="Forward OpenAI" class="w-9 h-9">
+                    <span class="font-semibold text-lg text-slate-800">Forward OpenAI</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-600 hover:text-brand-500 transition-colors">特性</a>
+                    <a href="#how-it-works" class="text-slate-600 hover:text-brand-500 transition-colors">工作原理</a>
+                    <a href="#faq" class="text-slate-600 hover:text-brand-500 transition-colors">FAQ</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="https://github.com" target="_blank" class="text-slate-600 hover:text-brand-500 transition-colors">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                    <a href="https://github.com" target="_blank" class="px-4 py-2 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-lg hover:from-brand-600 hover:to-brand-700 transition-all shadow-sm hover:shadow-md">
+                        GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="inline-flex items-center px-4 py-2 rounded-full glass-card mb-6">
+                <span class="w-2 h-2 bg-brand-500 rounded-full mr-2 animate-pulse"></span>
+                <span class="text-sm text-slate-600">支持 stream 流式转发</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6">
+                转发 OpenAI 接口地址的
+                <span class="gradient-text">小工具</span>
+            </h1>
+            
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+                Go + Docker 转发 OpenAI 的 API 接口，部署在海外服务器即可对 api.openai.com 进行代理，支持 stream 流
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="#how-it-works" class="px-8 py-3 bg-gradient-to-r from-brand-500 to-brand-600 text-white rounded-lg hover:from-brand-600 hover:to-brand-700 transition-all shadow-lg hover:shadow-xl font-medium">
+                    快速开始
+                </a>
+                <a href="https://github.com" target="_blank" class="px-8 py-3 glass-card text-slate-700 rounded-lg hover:bg-white/80 transition-all font-medium border border-brand-200">
+                    查看源码
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">核心特性</h2>
+                <p class="text-lg text-slate-600">灵活配置，简单部署，稳定可靠</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">Stream 流支持</h3>
+                    <p class="text-slate-600">完整支持 OpenAI 的流式响应，实时传输数据，无缝衔接原有使用方式</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">灵活配置</h3>
+                    <p class="text-slate-600">支持环境变量配置请求参数打印、转发目标地址、路径列表等选项</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">Docker 部署</h3>
+                    <p class="text-slate-600">一条命令即可完成部署，自动重启，支持环境变量配置，开箱即用</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">安全可靠</h3>
+                    <p class="text-slate-600">部署在海外服务器，安全稳定转发请求，保护你的 API 密钥</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">高性能</h3>
+                    <p class="text-slate-600">基于 Go 语言开发，性能卓越，内存占用低，并发能力强</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="glass-card rounded-xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-slate-900 mb-2">源码可用</h3>
+                    <p class="text-slate-600">开源项目，代码透明，可自由定制和扩展功能</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 px-4 bg-white/50">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">工作原理</h2>
+                <p class="text-lg text-slate-600">三步快速部署，立即开始使用</p>
+            </div>
+            
+            <div class="space-y-8">
+                <!-- Step 1 -->
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        1
+                    </div>
+                    <div class="flex-1 glass-card rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-slate-900 mb-3">Docker 快速部署</h3>
+                        <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                            <pre class="text-sm text-green-400 font-mono"><code>docker run -d \
+  --name forward_openai \
+  -p 8080:8080 \
+  -e sg.forward_openai.printParam=false \
+  -e sg.forward_openai.targetHost="https://api.openai.com" \
+  -e sg.forward_openai.forwardPathList="/v1/chat/completions" \
+  --restart=always \
+  --pull=always \
+  samge/forward_openai:latest</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        2
+                    </div>
+                    <div class="flex-1 glass-card rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-slate-900 mb-3">配置环境变量</h3>
+                        <div class="space-y-4 text-slate-600">
+                            <div class="flex items-center gap-3">
+                                <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
+                                <span><code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">printParam</code>: 是否打印请求参数，默认 false</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
+                                <span><code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">targetHost</code>: 转发目标地址，默认 https://api.openai.com</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="w-2 h-2 bg-brand-500 rounded-full"></span>
+                                <span><code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">forwardPathList</code>: 需要转发的路径列表，支持 | 分隔多个路径</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="flex gap-6 items-start">
+                    <div class="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        3
+                    </div>
+                    <div class="flex-1 glass-card rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-slate-900 mb-3">开始使用</h3>
+                        <p class="text-slate-600 mb-4">将原来的 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">https://api.openai.com</code> 改为 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">http://yourIpAddr:8080</code> 即可</p>
+                        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 rounded-lg p-4">
+                            <p class="text-sm text-slate-700">例如：<code>http://192.168.1.100:8080/v1/chat/completions</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Alternative: Source Code -->
+            <div class="mt-12 glass-card rounded-xl p-6">
+                <h3 class="text-xl font-semibold text-slate-900 mb-4 flex items-center gap-3">
+                    <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    源码运行（可选）
+                </h3>
+                <div class="bg-slate-900 rounded-lg p-4 overflow-x-auto">
+                    <pre class="text-sm text-green-400 font-mono"><code>go run main.go</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 px-4">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">常见问题</h2>
+                <p class="text-lg text-slate-600">解答你关于部署和使用的疑问</p>
+            </div>
+            
+            <div class="space-y-4">
+                <details class="glass-card rounded-xl group">
+                    <summary class="px-6 py-4 cursor-pointer font-medium text-slate-900 flex justify-between items-center">
+                        <span>如何配置多个转发路径？</span>
+                        <svg class="w-5 h-5 text-brand-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-4 text-slate-600">
+                        使用 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">|</code> 分隔符来配置多个路径，例如：<code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">/v1/chat/completions|/v1/completions|/v1/embeddings</code>
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl group">
+                    <summary class="px-6 py-4 cursor-pointer font-medium text-slate-900 flex justify-between items-center">
+                        <span>如何调试请求参数？</span>
+                        <svg class="w-5 h-5 text-brand-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-4 text-slate-600">
+                        将环境变量 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">sg.forward_openai.printParam</code> 设置为 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">true</code>，即可在日志中查看请求参数
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl group">
+                    <summary class="px-6 py-4 cursor-pointer font-medium text-slate-900 flex justify-between items-center">
+                        <span>支持哪些 OpenAI API 接口？</span>
+                        <svg class="w-5 h-5 text-brand-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-4 text-slate-600">
+                        支持所有 OpenAI API 接口，包括 Chat Completions、Completions、Embeddings 等。你可以在配置中指定需要转发的路径
+                    </div>
+                </details>
+                
+                <details class="glass-card rounded-xl group">
+                    <summary class="px-6 py-4 cursor-pointer font-medium text-slate-900 flex justify-between items-center">
+                        <span>Docker 部署后如何查看日志？</span>
+                        <svg class="w-5 h-5 text-brand-500 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </summary>
+                    <div class="px-6 pb-4 text-slate-600">
+                        使用 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">docker logs forward_openai</code> 查看日志，或使用 <code class="bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-sm shadow-emerald-500/30 px-2 py-1 rounded">docker logs -f forward_openai</code> 实时跟踪日志输出
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="py-20 px-4 bg-gradient-to-r from-brand-500 to-brand-600">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">加入技术交流</h2>
+            <p class="text-lg text-brand-50 mb-8">有问题或想要交流技术？欢迎加入我们的社区</p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="https://discord.com/invite/eRuSqve8CE" target="_blank" class="px-8 py-3 bg-white text-white rounded-lg hover:bg-brand-50 transition-all font-medium flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg>
+                    Join Discord
+                </a>
+                <a class="px-8 py-3 bg-brand-700 text-white rounded-lg hover:bg-brand-800 transition-all font-medium flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 12q-.425 0-.712-.288Q7 11.425 7 11t.288-.713Q7.575 10 8 10t.713.287Q9 10.575 9 11t-.287.712Q8.425 12 8 12Zm4 0q-.425 0-.712-.288Q11 11.425 11 11t.288-.713Q11.575 10 12 10t.713.287Q13 10.575 13 11t-.287.712Q12.425 12 12 12Zm4 0q-.425 0-.712-.288Q15 11.425 15 11t.288-.713Q15.575 10 16 10t.713.287Q17 10.575 17 11t-.287.712Q16.425 12 16 12Zm-4 7q-2.075 0-3.9-.788-1.825-.787-3.175-2.137Q4.075 14.725 3.288 12.9 2.5 11.075 2.5 9t.788-3.9Q4.075 3.275 5.425 1.925 6.775.575 8.6-.212 10.425-1 12.5-1t3.9.788q1.825.787 3.175 2.137Q20.925 3.275 21.713 5.1q.787 1.825.787 3.9t-.787 3.9q-.788 1.825-2.138 3.175-1.35 1.35-3.175 2.137Q14.575 19 12.5 19Z"/></svg>
+                    WeChat: SamgeApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-12 px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center space-x-3">
+                    <img src="icon.png" alt="Forward OpenAI" class="w-8 h-8">
+                    <span class="font-semibold text-white">Forward OpenAI</span>
+                </div>
+                
+                <div class="flex items-center space-x-6">
+                    <a href="https://github.com" target="_blank" class="hover:text-brand-400 transition-colors">GitHub</a>
+                    <a href="https://discord.com/invite/eRuSqve8CE" target="_blank" class="hover:text-brand-400 transition-colors">Discord</a>
+                </div>
+                
+                <div class="text-sm text-slate-400">
+                    Released under the MIT License
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-slate-800 text-center text-sm text-slate-400">
+                <p>© 2024 Forward OpenAI. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

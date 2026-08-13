@@ -1,6 +1,9 @@
 ## 转发OpenAI接口地址（包含stream流）的小工具
 go+docker转发OpenAI的API接口，部署在海外服务器即可对[https://api.openai.com](https://api.openai.com)进行代理，支持stream流。
 
+
+> 🌐 **[在线宣传页](https://samge0.github.io/forward_openai/)** — 可视化了解功能特性与工作流程
+
 可以配置（[点击配置文件路径](app/utils/u_config/u_config.go)）：
 - 是否打印请求参数，默认值：false
 - 转发目标地址，默认值：https://api.openai.com
